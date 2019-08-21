@@ -38,6 +38,11 @@ module.exports = function () {
 
           return statusText;
         },
+        getCreator = function (creator, trigger) {
+          if (typeof creator !== "undefined" && typeof creator.display_name !== "undefined") return creator.display_name;
+          if (typeof trigger !== "undefined" && typeof trigger.name !== "undefined") return trigger.name;
+          return "UNKNOWN";
+        },
         simplifyBuild = function (res) {
             return {
                 id: res.uuid,
@@ -46,7 +51,7 @@ module.exports = function () {
                 isRunning: !res.completed_on,
                 startedAt: parseDate(res.created_on),
                 finishedAt: parseDate(res.completed_on),
-                requestedFor: res.creator.display_name,
+                requestedFor: getCreator(res.creator, res.trigger),
                 statusText: getStatusText(res.state.name, (res.state.result || {}).name),
                 status: getStatus(res.state.name, (res.state.result || {}).name),
                 url: res.repository.links.self.href
